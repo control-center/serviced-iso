@@ -24,6 +24,11 @@ COMMON_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file
 # ISO Builder docker image.
 DOCKER_BUILDER = 'docker-registry-v2.zenoss.eng/iso-build'
 
+if os.environ.get("BUILD_NUMBER"):
+    BUILD_NUMBER = os.environ.get("BUILD_NUMBER")
+else:
+    BUILD_NUMBER = "dev"
+
 # If you do not have access to docker-registry-v2.zenoss.eng:
 # 1. Build the image in ./builder with "docker build ."
 # 2. Tag the resulting image as iso-build:latest
@@ -32,16 +37,23 @@ if os.environ.get("ISO_BUILD_IMAGE"):
     DOCKER_BUILDER = os.environ.get("ISO_BUILD_IMAGE")
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description= 'Make an ISO.')
+    parser = argparse.ArgumentParser(description= 'Make a CentOS ISO.')
     parser.add_argument('--manifest', required=True,
                         help='where to find manifest file (can be filepath or URL)')
     parser.add_argument('--build-dir', type=str, required=True,
                         help='where to find appliance artifacts')
     parser.add_argument('--zenoss-type', choices=('resmgr', 'core', 'ucspm', 'nfvimon'),
                         help='appliance hypervisor to use')
+    parser.add_argument('--centos-version', choices=('7.2.1511', '7.1.1503'),
+                        help='CentOS version to use')
     args = parser.parse_args()
 
     build_dir = os.path.abspath(args.build_dir)
+    if args.centos_version:
+        centos_version = args.centos_version
+    else:
+        centos_version = '7.2.1511'
+
 
     # Get build
     if args.manifest.startswith('http'):
@@ -71,5 +83,5 @@ if __name__ == '__main__':
 
     # Create ISO
     log.info('Calling docker run to create ISO')
-    check_call('docker run --privileged=true --rm -v=%s:/build -v=%s:/common -v=%s:/output %s' % (
-                build_dir, COMMON_DIR, OUTPUT_DIR, DOCKER_BUILDER), shell=True)
+    check_call('docker run -e "BUILD_NUMBER=%s" -e "CENTOS_VERSION=%s" --privileged=true --rm -v=%s:/build -v=%s:/common -v=%s:/output %s' % (
+                BUILD_NUMBER, centos_version, build_dir, COMMON_DIR, OUTPUT_DIR, DOCKER_BUILDER), shell=True)
