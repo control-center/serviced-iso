@@ -1,0 +1,34 @@
+{
+  "builders": [
+    {
+      "boot_wait": "20s",
+      "output_directory": "{{user `outputdir`}}",
+      "ssh_password": "{{user `zenosstype`}}",
+      "ssh_port": 22,
+      "ssh_username": "ccuser",
+      "ssh_wait_timeout": "900s",
+      "headless": true,
+      "type": "vmware-vmx",
+      "source_path": "{{user `inputdir`}}/zenoss-{{user `zenosstype`}}.vmx",
+      "vm_name": "zenoss-{{user `zenosstype`}}-deps",
+      "vmx_data": {
+        "memsize": "2048",
+        "numvcpus": "1",
+        "virtualhw.version": "8",
+        "mainMem.useNamedFile": "FALSE",
+        "mainMem.backing": "swap"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [ "echo 'START RPM LIST'; rpm -qa; echo 'END RPM LIST'" ]
+    }
+  ],
+  "variables": {
+    "zenosstype": "resmgr",
+    "inputdir": "output",
+    "outputdir": "output-deps"
+  }
+}
