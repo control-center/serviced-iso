@@ -1,0 +1,58 @@
+{
+  "builders": [
+    {
+      "boot_wait": "20s",
+      "output_directory": "{{user `outputdir`}}",
+      "ssh_password": "{{user `zenosstype`}}",
+      "ssh_port": 22,
+      "ssh_username": "ccuser",
+      "ssh_wait_timeout": "900s",
+      "headless": true,
+      "type": "vmware-vmx",
+      "source_path": "{{user `inputdir`}}/zenoss-{{user `zenosstype`}}.vmx",
+      "vm_name": "zenoss-{{user `zenosstype`}}-deps",
+      "vmx_data": {
+        "memsize": "2048",
+        "numvcpus": "1",
+        "virtualhw.version": "8",
+        "mainMem.useNamedFile": "FALSE",
+        "mainMem.backing": "swap"
+      }
+    },
+    {
+      "type": "virtualbox-iso",
+      "guest_os_type": "RedHat_64",
+      "output_directory": "{{user `outputdir`}}",
+      "iso_url": "zenoss-centos-7.2.1511-dev.x86_64.iso",
+      "iso_checksum": "76d8324fa46ddff6903c7c3e116d7549",
+      "iso_checksum_type": "md5",
+      "vm_name": "zenoss-{{user `zenosstype`}}-test-iso-vm",
+      "ssh_username": "centos",
+      "ssh_password": "centos",
+      "ssh_wait_timeout": "900s",
+      "headless": true,
+      "disk_size": 32768,
+      "http_directory": "http",
+      "boot_command": [
+        "<wait><esc><esc>",
+        "linux ks=/zenoss/ks.cfg<enter>"
+      ],
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "2048"],
+        ["modifyvm", "{{.Name}}", "--cpus", "1"]
+      ],
+      "shutdown_command": "echo 'packer' | sudo -S shutdown -P now"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [ "echo 'START RPM LIST'; rpm -qa; echo 'END RPM LIST'" ]
+    }
+  ],
+  "variables": {
+    "zenosstype": "core",
+    "inputdir": "output",
+    "outputdir": "test-iso-vm-output"
+  }
+}

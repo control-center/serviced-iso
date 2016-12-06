@@ -35,12 +35,17 @@ find working -name TRANS.TBL -exec rm -f {} \; -print
 yum makecache fast
 cd /working/Packages
 
-# while read pkg; do
-#   yumdownloader --resolve $pkg
-# done </build/dependencies.txt
-
+tar -xzvf /centos-rpms.tar.gz
 createrepo -pgo .. .
 cd /
+
+cat <<EOF > /etc/yum.repos.d/zenoss-local.repo
+[zenoss-local]
+name=Zenoss 5.2.x Centos 7 Dependencies
+baseurl=file:///working/Packages
+enabled=1
+gpgcheck=0
+EOF
 
 # stage files needed on appliance
 mkdir working/zenoss
