@@ -33,24 +33,28 @@ find working -name TRANS.TBL -exec rm -f {} \; -print
 
 # update RPM repo with newer files
 yum makecache fast
-cd /working/Packages
-
-tar -xzvf /centos-rpms.tar.gz
-createrepo -pgo .. .
+echo 'About to copy packages'
+cd working/Packages
+# ls .
+gunzip /centos7-rpms.tar.gz
+tar -xvf /centos7-rpms.tar
+createrepo -p --update --update-md-path=.. --outputdir=.. --groupfile=/working/repodata/3eda3fefdbaf4777fcab430c80bc438293c512f22fd706b12c6567d535b2142a-c7-x86_64-comps.xml /working/Packages
+# ls .
+echo 'Done copying packages'
 cd /
 
-cat <<EOF > /etc/yum.repos.d/zenoss-local.repo
+# stage files needed on appliance
+mkdir working/zenoss
+cp -r build working/zenoss
+cp -r common working/zenoss
+
+cat <<EOF > working/zenoss/zenoss-local.repo
 [zenoss-local]
 name=Zenoss 5.2.x Centos 7 Dependencies
 baseurl=file:///working/Packages
 enabled=1
 gpgcheck=0
 EOF
-
-# stage files needed on appliance
-mkdir working/zenoss
-cp -r build working/zenoss
-cp -r common working/zenoss
 
 # install kickstart and modify boot config
 cp zenoss-5-ks.cfg working/zenoss/ks.cfg
