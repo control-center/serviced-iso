@@ -1,0 +1,27 @@
+{
+  "builders": [
+  {
+    "type": "virtualbox-ovf",
+    "source_path": "output-virtualbox-iso/zenoss-core-deps.ovf",
+    "ssh_username": "centos",
+    "ssh_password": "centos",
+    "shutdown_command": "echo 'packer' | sudo -S shutdown -P now"
+  }
+],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "mkdir -p tmp/Packages",
+        "sudo yum -y update --downloadonly --downloaddir=./tmp/Packages",
+        "tar -czvf tmp/centos7-rpm-updates.tar.gz tmp/Packages"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "tmp/centos7-rpm-updates.tar.gz",
+      "destination": "centos7-rpm-updates.tar.gz",
+      "direction": "download"
+    }
+  ]
+}
