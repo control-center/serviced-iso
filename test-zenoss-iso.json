@@ -23,8 +23,8 @@
       "type": "virtualbox-iso",
       "guest_os_type": "RedHat_64",
       "output_directory": "{{user `outputdir`}}",
-      "iso_url": "zenoss-centos-7.2.1511-dev.x86_64.iso",
-      "iso_checksum": "76d8324fa46ddff6903c7c3e116d7549",
+      "iso_url": "zenoss-centos-7.2.1511-005.x86_64.iso",
+      "iso_checksum": "6c812126693cd7ba76d1f6a9f5e0c82e",
       "iso_checksum_type": "md5",
       "vm_name": "zenoss-{{user `zenosstype`}}-test-iso-vm",
       "ssh_username": "centos",
@@ -35,7 +35,7 @@
       "http_directory": "http",
       "boot_command": [
         "<wait><esc><esc>",
-        "linux ks=/zenoss/ks.cfg<enter>"
+        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/kickstart<enter><wait>"
       ],
       "vboxmanage": [
         ["modifyvm", "{{.Name}}", "--memory", "2048"],
