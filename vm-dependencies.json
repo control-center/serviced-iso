@@ -18,6 +18,29 @@
         "mainMem.useNamedFile": "FALSE",
         "mainMem.backing": "swap"
       }
+    },
+    {
+      "type": "virtualbox-iso",
+      "guest_os_type": "RedHat_64",
+      "iso_url": "http://10.87.128.98:8000/CentOS-7-x86_64-Minimal-1511.iso",
+      "iso_checksum": "88c0437f0a14c6e2c94426df9d43cd67",
+      "iso_checksum_type": "md5",
+      "vm_name": "zenoss-{{user `zenosstype`}}-deps",
+      "ssh_username": "centos",
+      "ssh_password": "centos",
+      "ssh_wait_timeout": "900s",
+      "headless": true,
+      "disk_size": 32768,
+      "http_directory": "http",
+      "boot_command": [
+        "<wait><esc><esc>",
+        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/kickstart<enter>"
+      ],
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "2048"],
+        ["modifyvm", "{{.Name}}", "--cpus", "1"]
+      ],
+      "shutdown_command": "echo 'packer' | sudo -S shutdown -P now"
     }
   ],
   "provisioners": [
@@ -27,7 +50,7 @@
     }
   ],
   "variables": {
-    "zenosstype": "resmgr",
+    "zenosstype": "core",
     "inputdir": "output",
     "outputdir": "output-deps"
   }
