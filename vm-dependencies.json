@@ -21,6 +21,7 @@
     },
     {
       "type": "virtualbox-iso",
+      "output_directory": "{{user `outputdir`}}",
       "guest_os_type": "RedHat_64",
       "iso_url": "{{user `iso_url`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
@@ -57,6 +58,6 @@
     "iso_url": "http://artifacts.zenoss.eng/isos/CentOS-7-x86_64-Minimal-1511.iso",
     "iso_checksum": "88c0437f0a14c6e2c94426df9d43cd67",
     "ssh_username": "centos",
-    "ssh_password": "centos",
+    "ssh_password": "centos"
   }
 }
