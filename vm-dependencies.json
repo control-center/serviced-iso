@@ -10,7 +10,7 @@
       "headless": true,
       "type": "vmware-vmx",
       "source_path": "{{user `inputdir`}}/zenoss-{{user `zenosstype`}}.vmx",
-      "vm_name": "zenoss-{{user `zenosstype`}}-deps",
+      "vm_name": "{{user `vm_name`}}",
       "vmx_data": {
         "memsize": "2048",
         "numvcpus": "1",
@@ -22,12 +22,12 @@
     {
       "type": "virtualbox-iso",
       "guest_os_type": "RedHat_64",
-      "iso_url": "http://10.87.128.98:8000/CentOS-7-x86_64-Minimal-1511.iso",
-      "iso_checksum": "88c0437f0a14c6e2c94426df9d43cd67",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "md5",
-      "vm_name": "zenoss-{{user `zenosstype`}}-deps",
-      "ssh_username": "centos",
-      "ssh_password": "centos",
+      "vm_name": "{{user `vm_name`}}",
+      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_password": "{{user `ssh_password`}}",
       "ssh_wait_timeout": "900s",
       "headless": true,
       "disk_size": 32768,
@@ -51,7 +51,12 @@
   ],
   "variables": {
     "zenosstype": "core",
-    "inputdir": "output",
-    "outputdir": "output-deps"
+    "inputdir": "prereqs",
+    "outputdir": "output",
+    "vm_name": "zenoss-centos-7.2.1511",
+    "iso_url": "http://artifacts.zenoss.eng/isos/CentOS-7-x86_64-Minimal-1511.iso",
+    "iso_checksum": "88c0437f0a14c6e2c94426df9d43cd67",
+    "ssh_username": "centos",
+    "ssh_password": "centos",
   }
 }
