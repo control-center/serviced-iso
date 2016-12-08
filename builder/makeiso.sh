@@ -34,27 +34,34 @@ find working -name TRANS.TBL -exec rm -f {} \; -print
 # update RPM repo with newer files
 yum makecache fast
 echo 'About to copy packages'
-cd working/Packages
+mkdir working/zenoss-repo
+cd working/zenoss-repo
+# cd working/Packages
 # ls .
 gunzip /centos7-rpms.tar.gz
-tar -xvf /centos7-rpms.tar
-createrepo -p --update --update-md-path=.. --outputdir=.. --groupfile=/working/repodata/3eda3fefdbaf4777fcab430c80bc438293c512f22fd706b12c6567d535b2142a-c7-x86_64-comps.xml /working/Packages
+tar -xf /centos7-rpms.tar
+# createrepo -p --update --update-md-path=.. --outputdir=.. \
+#   --unique-md \
+#   --groupfile=/working/repodata/c30db98d87c9664d3e52acad6596f6968b4a2c6974c80d119137a804c15cdf86-c7-minimal-x86_64-comps.xml .
+# ls .
+createrepo -p --unique-md .
+# pwd
 # ls .
 echo 'Done copying packages'
 cd /
 
 # stage files needed on appliance
 mkdir working/zenoss
-cp -r build working/zenoss
-cp -r common working/zenoss
+# cp -r build working/zenoss
+# cp -r common working/zenoss
 
-cat <<EOF > working/zenoss/zenoss-local.repo
-[zenoss-local]
-name=Zenoss 5.2.x Centos 7 Dependencies
-baseurl=file:///working/Packages
-enabled=1
-gpgcheck=0
-EOF
+# cat <<EOF > working/zenoss/zenoss-local.repo
+# [zenoss-local]
+# name=Zenoss 5.2.x Centos 7 Dependencies
+# baseurl=file:///working/Packages
+# enabled=1
+# gpgcheck=0
+# EOF
 
 # install kickstart and modify boot config
 cp zenoss-5-ks.cfg working/zenoss/ks.cfg
@@ -75,11 +82,13 @@ sed -i "s/APPLIANCE_ISO_ID/$ISO_ID/g" working/isolinux/isolinux.cfg
 
 # build ISO
 cd working
+du -h
 chmod 664 isolinux/isolinux.bin
 mkisofs -o /output/$ISO_FILENAME \
         -b isolinux/isolinux.bin \
         -c isolinux/boot.cat \
         -no-emul-boot \
+        -joliet-long \
         -V "$ISO_ID" \
         -boot-load-size 4 \
         -boot-info-table \
