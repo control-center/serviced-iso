@@ -38,12 +38,8 @@ if os.environ.get("ISO_BUILD_IMAGE"):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description= 'Make a CentOS ISO.')
-    parser.add_argument('--manifest', required=True,
-                        help='where to find manifest file (can be filepath or URL)')
     parser.add_argument('--build-dir', type=str, required=True,
                         help='where to find appliance artifacts')
-    parser.add_argument('--zenoss-type', choices=('resmgr', 'core', 'ucspm', 'nfvimon'),
-                        help='appliance hypervisor to use')
     parser.add_argument('--centos-version', choices=('7.2.1511', '7.1.1503'),
                         help='CentOS version to use')
     args = parser.parse_args()
@@ -53,28 +49,6 @@ if __name__ == '__main__':
         centos_version = args.centos_version
     else:
         centos_version = '7.2.1511'
-
-
-    # Get build
-    if args.manifest.startswith('http'):
-        # If manifest is from URL, download the build to a local dir
-        manifest = json.loads(urlopen(args.manifest).read())
-        urldir = args.manifest.rsplit('/', 1)[0] + '/'
-
-        log.info('Removing old build dir')
-        shutil.rmtree(build_dir, ignore_errors=True)
-
-        log.info('Making build dir and dumping manifest')
-        os.mkdir(build_dir)
-        json.dump(manifest,
-                  open(os.path.join(build_dir, 'manifest.%s.json' % args.zenoss_type), 'w'),
-                  sort_keys=True, indent=4)
-        for f in manifest['images'].values() + manifest['rpms'].values():
-            log.info('Downloading %s' % f)
-            urlretrieve(urldir + f, os.path.join(build_dir, f))
-    else:
-        manifest = json.load(open(args.manifest))
-        build_dir = os.path.abspath(os.path.dirname(args.manifest))
 
     # Update builder image
     if DOCKER_BUILDER.startswith('docker-registry-v2.zenoss.eng'):
