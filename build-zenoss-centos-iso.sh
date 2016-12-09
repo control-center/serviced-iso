@@ -3,7 +3,18 @@
 set -o errtrace
 trap 'echo "Error occurred on $FUNCNAME."' ERR
 
-CENTOS_ISO=CentOS-7-x86_64-Minimal-1511
+if [ -z "${CENTOS_ISO}" ]
+then
+    echo "ERROR: CENTOS_ISO undefined"
+    exit 1
+fi
+
+if [ -z "${ISO_CHECKSUM}" ]
+then
+    echo "ERROR: ISO_CHECKSUM undefined"
+    exit 1
+fi
+
 ISO_FILENAME=${CENTOS_ISO}.iso
 ISO_FILEPATH=$HOME/isos/${ISO_FILENAME}
 ISO_CHECKSUM=88c0437f0a14c6e2c94426df9d43cd67
