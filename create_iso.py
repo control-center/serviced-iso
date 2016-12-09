@@ -4,30 +4,14 @@ import argparse
 import json
 import logging as log
 import os
-import shutil
 
 from subprocess import check_call, check_output
-from urllib import urlretrieve
-from urllib2 import urlopen
+
 
 log.basicConfig(level=log.INFO)
 
-# Default location for 'build' dir in CWD
-BUILD_DIR = os.path.abspath('build')
-
-# Default location for output is CWD
-OUTPUT_DIR = os.path.abspath('.')
-
-# Common dir is one dir up from this source file
-COMMON_DIR = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../common'))
-
 # ISO Builder docker image.
-DOCKER_BUILDER = 'docker-registry-v2.zenoss.eng/iso-build'
-
-if os.environ.get("BUILD_NUMBER"):
-    BUILD_NUMBER = os.environ.get("BUILD_NUMBER")
-else:
-    BUILD_NUMBER = "dev"
+DOCKER_BUILDER = 'docker-registry-v2.zenoss.eng/base-iso-build:1.0.0'
 
 # If you do not have access to docker-registry-v2.zenoss.eng:
 # 1. Build the image in ./builder with "docker build ."
@@ -39,23 +23,29 @@ if os.environ.get("ISO_BUILD_IMAGE"):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description= 'Make a CentOS ISO.')
     parser.add_argument('--build-dir', type=str, required=True,
-                        help='where to find appliance artifacts')
-    parser.add_argument('--centos-version', choices=('7.2.1511', '7.1.1503'),
-                        help='CentOS version to use')
+                        help='where to find all of the inputs and outputs')
+    parser.add_argument('--build-number', type=str, default="dev",
+                        help='the build number')
+    parser.add_argument('--base-iso', type=str, required=True,
+                        help='CentOS original ISO to start from')
+    parser.add_argument('--rpm-tarfile', type=str, required=True,
+                        help='the name of the tar file containing RPM updates')
     args = parser.parse_args()
 
     build_dir = os.path.abspath(args.build_dir)
-    if args.centos_version:
-        centos_version = args.centos_version
-    else:
-        centos_version = '7.2.1511'
 
-    # Update builder image
+    # Get builder image
     if DOCKER_BUILDER.startswith('docker-registry-v2.zenoss.eng'):
         log.info('Calling docker pull to update ISO builder image')
         check_call('docker pull %s' % DOCKER_BUILDER, shell=True)
 
-    # Create ISO
+    zenoss_centos_iso = "zenoss-%s-bld-%s.iso" % (args.base_iso, args.build_number)
+
+    # Create the Zenoss CentOS ISO from base_iso + rpm_tarfile. 
+    # The result is saved as zenoss_centos_iso
     log.info('Calling docker run to create ISO')
-    check_call('docker run -e "BUILD_NUMBER=%s" -e "CENTOS_VERSION=%s" --privileged=true --rm -v=%s:/build -v=%s:/common -v=%s:/output %s' % (
-                BUILD_NUMBER, centos_version, build_dir, COMMON_DIR, OUTPUT_DIR, DOCKER_BUILDER), shell=True)
+    check_call('docker run -e "BASE_ISO_NAME=%s.iso" -e "RPM_TARFILE=%s" -e "ISO_FILENAME=%s" --privileged=true --rm -v=%s:/mnt/build -v=%s:/mnt/output %s' % (
+                args.base_iso, args.rpm_tarfile, zenoss_centos_iso,
+                build_dir, build_dir,
+                DOCKER_BUILDER), shell=True)
+

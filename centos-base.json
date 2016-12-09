@@ -16,7 +16,7 @@
       "http_directory": "http",
       "boot_command": [
         "<wait><esc><esc>",
-        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/kickstart<enter>"
+        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/{{user `kickstart`}}<enter>"
       ],
       "ssh_port": 22,
       "vmx_data": {
@@ -34,7 +34,7 @@
       "iso_url": "{{user `iso_url`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "md5",
-      "vm_name": "{{user `vm_name`}}",
+      "vm_name": "{{user `centos_iso`}}",
       "ssh_username": "{{user `ssh_username`}}",
       "ssh_password": "{{user `ssh_password`}}",
       "ssh_wait_timeout": "900s",
@@ -43,7 +43,7 @@
       "http_directory": "http",
       "boot_command": [
         "<wait><esc><esc>",
-        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/kickstart<enter>"
+        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/{{user `kickstart`}}<enter>"
       ],
       "vboxmanage": [
         ["modifyvm", "{{.Name}}", "--memory", "2048"],
@@ -60,10 +60,11 @@
   ],
   "variables": {
     "inputdir": "prereqs",
+    "kickstart": "centos-base-kickstart",
     "outputdir": "output",
-    "vm_name": "zenoss-centos-7.2.1511",
-    "iso_url": "http://artifacts.zenoss.eng/isos/CentOS-7-x86_64-Minimal-1511.iso",
-    "iso_checksum": "88c0437f0a14c6e2c94426df9d43cd67",
+    "centos_iso": "",
+    "iso_url": "",
+    "iso_checksum": "",
     "ssh_username": "centos",
     "ssh_password": "centos"
   }
