@@ -1,36 +1,28 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # Step 1 Build Dependencies tarball
 # inputs: centos-7.2.1511 iso, or centos-7.2.1511 VM
 # outputs: tarball of RPMS,
-curl -sO http://artifacts.zenoss.eng/isos/prereqs/zenoss-centos-7.2.1511.tar.gz
-if [ -e zenoss-centos-7.2.1511.tar.gz ]
-then
-  pushd prereqs
-  tar -xzvf zenoss-centos-7.2.1511.tar.gz
-  popd
-else
-  packer -machine-reable build -only=virtualbox-iso vm-dependencies.json
-  # upload newly created vm file to artifacts
-fi
+packer -machine-readable build -force -only=virtualbox-iso vm-dependencies.json
+# upload newly created vm file to artifacts
 
-# The next two packer scripts can probably be merged into one build script
-# that can run in parallel, either as two parallel builders or as concurrent
-# processes within a provisioner job
-packer -machine-readable build -only=virtualbox-ovf vm-get-centos7-base-pkgs.json
-# check if centos7-base-pkgs.tar.gz exists
-packer -machine-readable build -only=virtualbox-ovf vm-get-update-pkgs.json
-# check if centos7-rpm-updates.tar.gz exists
-# merge RPMs tarballs into single tarball with flat directory tree
+# Step 1.2
+packer -machine-readable build -force -only=virtualbox-ovf vm-get-update-pkgs.json
 
 # Step 2 Build iso-build image
 # inputs: makeiso.sh, centos7-rpms.tar.gz
 # outputs: iso-build Docker image
+mv centos7-rpms.tar.gz builder/.
+pushd builder/
+docker build -t iso-build:latest .
+popd
 
 # Step 3 Create zenoss-centos ISO file
 # inputs: centos_version, iso_build_number
-# outputs: zenoss-centos-<CENTOS_VERSION>-<ISO_BUILD_NUMBER>-x86_64.iso
+# outputs: output/zenoss-centos-<CENTOS_VERSION>-<ISO_BUILD_NUMBER>-x86_64.iso
+mkdir -p output
+python create_iso.py --build-dir=./output --centos-version=$CENTOS_VERSION
 
-# Step 4 upload to artifacts
+# Step 4 Test newly created ISO file
 # inputs: newly build zenoss-centos ISO
-# output: ISO uploaded to artifacts
+# output: a Centos VM based on the ISO that was just built
