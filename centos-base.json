@@ -1,0 +1,71 @@
+{
+  "builders": [
+    {
+      "type": "vmware-iso",
+      "output_directory": "{{user `outputdir`}}",
+      "guest_os_type": "RedHat_64",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "md5",
+      "vm_name": "{{user `vm_name`}}",
+      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_password": "{{user `ssh_password`}}",
+      "ssh_wait_timeout": "900s",
+      "headless": true,
+      "disk_size": 32768,
+      "http_directory": "http",
+      "boot_command": [
+        "<wait><esc><esc>",
+        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/{{user `kickstart`}}<enter>"
+      ],
+      "ssh_port": 22,
+      "vmx_data": {
+        "memsize": "2048",
+        "numvcpus": "1",
+        "virtualhw.version": "8",
+        "mainMem.useNamedFile": "FALSE",
+        "mainMem.backing": "swap"
+      }
+    },
+    {
+      "type": "virtualbox-iso",
+      "output_directory": "{{user `outputdir`}}",
+      "guest_os_type": "RedHat_64",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "md5",
+      "vm_name": "{{user `centos_iso`}}",
+      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_password": "{{user `ssh_password`}}",
+      "ssh_wait_timeout": "900s",
+      "headless": true,
+      "disk_size": 32768,
+      "http_directory": "http",
+      "boot_command": [
+        "<wait><esc><esc>",
+        "linux ks=http://{{.HTTPIP}}:{{.HTTPPort}}/{{user `kickstart`}}<enter>"
+      ],
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "2048"],
+        ["modifyvm", "{{.Name}}", "--cpus", "1"]
+      ],
+      "shutdown_command": "echo 'packer' | sudo -S shutdown -P now"
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [ "echo 'START RPM LIST'; rpm -qa; echo 'END RPM LIST'" ]
+    }
+  ],
+  "variables": {
+    "inputdir": "prereqs",
+    "kickstart": "centos-base-kickstart",
+    "outputdir": "output",
+    "centos_iso": "",
+    "iso_url": "",
+    "iso_checksum": "",
+    "ssh_username": "centos",
+    "ssh_password": "centos"
+  }
+}

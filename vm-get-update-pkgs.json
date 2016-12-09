@@ -1,0 +1,31 @@
+{
+  "builders": [
+  {
+    "type": "virtualbox-ovf",
+    "source_path": "{{user `vm_source`}}",
+    "ssh_username": "centos",
+    "ssh_password": "centos",
+    "headless": true,
+    "shutdown_command": "echo 'packer' | sudo -S shutdown -P now"
+  }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "scripts": [
+         "./get-update-pkgs.sh"
+      ]
+    },
+    {
+      "type": "file",
+      "source": "/home/centos/centos7-rpms.tar.gz",
+      "destination": "{{user `outputdir`}}/{{user `rpm_tarfile`}}",
+      "direction": "download"
+    }
+  ],
+  "variables": {
+    "vm_source": "",
+    "rpm_tarfile": "",
+    "outputdir": "output"
+  }
+}
