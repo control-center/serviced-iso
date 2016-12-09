@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# print stack trace
+set -o errtrace
+trap 'echo "Error occurred on $FUNCNAME."' ERR
 
 # Step 1 Build Dependencies tarball
 # inputs: centos-7.2.1511 iso, or centos-7.2.1511 VM
