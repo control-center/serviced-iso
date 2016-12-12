@@ -55,6 +55,8 @@ then
 fi
 
 set -x
+set -e
+pwd
 rm -rf ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}
 
@@ -72,10 +74,11 @@ packer -machine-readable build -force \
 # Step 2 Start the VM from step 1 to build a tarball of OS and
 #        third-party RPMs from "yum updates"
 #
-# Use -only=virtualbox-ovf to test with VirtualBox instead of VMWare
+# To test with VirtualBox instead of VMWare, use:
+# -only=virtualbox-ovf -var vm_source=${BUILD_DIR}/${CENTOS_ISO}.ovf
 packer -machine-readable build -force \
 	-only=vmware-vmx \
-	-var vm_source=${BUILD_DIR}/${CENTOS_ISO}.ovf \
+	-var vm_source=${BUILD_DIR}/${CENTOS_ISO}.vmx \
 	-var cc_repo=${CC_REPO} \
 	-var cc_rpm=${CC_RPM} \
 	-var rpm_tarfile=${RPM_TARFILE} \
