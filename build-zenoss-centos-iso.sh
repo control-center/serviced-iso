@@ -59,17 +59,22 @@ rm -rf ${BUILD_DIR}
 mkdir -p ${BUILD_DIR}
 
 # Step 1 Build a VM from the Centos ISO
+#
+# Use -only=virtualbox-iso to test with VirtualBox instead of VMWare
 packer -machine-readable build -force \
-	-only=virtualbox-iso \
+	-only=vmware-iso \
 	-var iso_url=file:${ISO_FILEPATH} \
 	-var iso_checksum=${ISO_CHECKSUM} \
 	-var centos_iso=${CENTOS_ISO} \
 	-var outputdir=${BUILD_DIR} \
 	centos-base.json
 
-# Step 2 Build tarball of OS and third-party RPMs from "yum updates"
+# Step 2 Start the VM from step 1 to build a tarball of OS and
+#        third-party RPMs from "yum updates"
+#
+# Use -only=virtualbox-ovf to test with VirtualBox instead of VMWare
 packer -machine-readable build -force \
-	-only=virtualbox-ovf \
+	-only=vmware-vmx \
 	-var vm_source=${BUILD_DIR}/${CENTOS_ISO}.ovf \
 	-var cc_repo=${CC_REPO} \
 	-var cc_rpm=${CC_RPM} \

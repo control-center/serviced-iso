@@ -7,7 +7,7 @@
       "iso_url": "{{user `iso_url`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "md5",
-      "vm_name": "{{user `vm_name`}}",
+      "vm_name": "{{user `centos_iso`}}",
       "ssh_username": "{{user `ssh_username`}}",
       "ssh_password": "{{user `ssh_password`}}",
       "ssh_wait_timeout": "900s",
@@ -25,7 +25,8 @@
         "virtualhw.version": "8",
         "mainMem.useNamedFile": "FALSE",
         "mainMem.backing": "swap"
-      }
+      },
+      "shutdown_command": "echo 'packer' | sudo -S shutdown -P now"
     },
     {
       "type": "virtualbox-iso",

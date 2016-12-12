@@ -1,6 +1,14 @@
 {
   "builders": [
   {
+    "type": "vmware-vmx",
+    "source_path": "{{user `vm_source`}}",
+    "ssh_username": "centos",
+    "ssh_password": "centos",
+    "headless": true,
+    "shutdown_command": "echo 'packer' | sudo -S shutdown -P now"
+  },
+  {
     "type": "virtualbox-ovf",
     "source_path": "{{user `vm_source`}}",
     "ssh_username": "centos",
