@@ -22,9 +22,9 @@ done
 
 # Install the Zenoss repo so
 curl -sO http://get.zenoss.io/yum/zenoss-repo-1-1.x86_64.rpm
-yum localinstall -y zenoss-repo-1-1.x86_64.rpm
+sudo yum localinstall -y zenoss-repo-1-1.x86_64.rpm
 
-cat <<EOF > /etc/yum.repos.d/docker.repo
+sudo cat <<EOF > /etc/yum.repos.d/docker.repo
 [dockerrepo]
 name=Docker Repository
 baseurl=https://yum.dockerproject.org/repo/main/centos/7

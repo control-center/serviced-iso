@@ -15,6 +15,18 @@ then
     exit 1
 fi
 
+if [ -z "${CC_REPO}" ]
+then
+    echo "ERROR: CC_REPO undefined"
+    exit 1
+fi
+
+if [ -z "${CC_RPM}" ]
+then
+    echo "ERROR: CC_RPM undefined"
+    exit 1
+fi
+
 ISO_FILENAME=${CENTOS_ISO}.iso
 ISO_FILEPATH=$HOME/isos/${ISO_FILENAME}
 RPM_TARFILE=${CENTOS_ISO}-rpm-updates.tar.gz
@@ -72,8 +84,10 @@ packer -machine-readable build -force \
 cp ${ISO_FILEPATH} ${BUILD_DIR}
 python create_iso.py \
 	--build-dir=${BUILD_DIR} \
-        --build-number=${BUILD_NUMBER} \
-        --base-iso=${CENTOS_ISO} \
+	--build-number=${BUILD_NUMBER} \
+	--base-iso=${CENTOS_ISO} \
+	--cc-repo=${CC_REPO} \
+	--cc-rpm=${CC_RPM} \
 	--rpm-tarfile=${RPM_TARFILE}
 
 # Step 4 Test newly created ISO file
