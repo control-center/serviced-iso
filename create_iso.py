@@ -34,6 +34,8 @@ if __name__ == '__main__':
                         help='The yum repo were the serviced RPM resides')
     parser.add_argument('--rpm-tarfile', type=str, required=True,
                         help='the name of the tar file containing RPM updates')
+    parser.add_argument('--output-name', type=str, required=True,
+                        help='the name of the ISO file to be created')
     args = parser.parse_args()
 
     build_dir = os.path.abspath(args.build_dir)
@@ -43,13 +45,11 @@ if __name__ == '__main__':
         log.info('Calling docker pull to update ISO builder image')
         check_call('docker pull %s' % DOCKER_BUILDER, shell=True)
 
-    serviced_centos_iso = "%s-%s-%s-bld-%s.iso" % (args.cc_rpm, args.cc_repo, args.base_iso, args.build_number)
-
     # Create the Zenoss CentOS ISO from base_iso + rpm_tarfile.
     # The result is saved as zenoss_centos_iso
     log.info('Calling docker run to create ISO')
     check_call('docker run -e "BASE_ISO_NAME=%s.iso" -e "RPM_TARFILE=%s" -e "ISO_FILENAME=%s" --privileged=true --rm -v=%s:/mnt/build -v=%s:/mnt/output %s' % (
-                args.base_iso, args.rpm_tarfile, serviced_centos_iso,
+                args.base_iso, args.rpm_tarfile, args.output_name,
                 build_dir, build_dir,
                 DOCKER_BUILDER), shell=True)
 

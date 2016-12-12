@@ -27,6 +27,21 @@ then
     exit 1
 fi
 
+case "${CENTOS_ISO}" in
+   *1511*)
+	CENTOS_ABBREV=centos7.2.1511
+	;;
+
+   *1503*)
+	CENTOS_ABBREV=centos7.1.1503
+	;;
+
+   *)
+	echo "ERROR: CENTOS_ISO='${CENTOS_ISO}' does not contain one of the recognized versions: 1511 or 1503"
+	exit 1
+	;;
+esac
+
 ISO_FILENAME=${CENTOS_ISO}.iso
 ISO_FILEPATH=$HOME/isos/${ISO_FILENAME}
 RPM_TARFILE=${CENTOS_ISO}-rpm-updates.tar.gz
@@ -85,28 +100,34 @@ packer -machine-readable build -force \
 	-var outputdir=${BUILD_DIR} \
 	vm-get-update-pkgs.json
 
-# Step 3 Create zenoss-centos ISO file that includes the files from the
-#        tarball in a separate directory
-# inputs: a CentOS ISO file, and a tarball of updated RPMs
-# outputs: output/zenoss-<CENTOS_ISO>-bld-<BUILD_NUMBER>.iso
-cp ${ISO_FILEPATH} ${BUILD_DIR}
-python create_iso.py \
-	--build-dir=${BUILD_DIR} \
-	--build-number=${BUILD_NUMBER} \
-	--base-iso=${CENTOS_ISO} \
-	--cc-repo=${CC_REPO} \
-	--cc-rpm=${CC_RPM} \
-	--rpm-tarfile=${RPM_TARFILE}
-
-# Step 4 Create the offline mirror based on the tar file
+# Step 3 Create the offline mirror based on the tar file
 #
+OUTPUT_NAME="${CC_RPM}-${CC_REPO}-${CENTOS_ABBREV}-bld-${BUILD_NUMBER}"
+OUTPUT_RPM="${OUTPUT_NAME}.rpm"
 python ./create_mirror.py \
 	--build-dir=${BUILD_DIR} \
 	--build-number=${BUILD_NUMBER} \
 	--base-iso=${CENTOS_ISO} \
 	--cc-repo=${CC_REPO} \
 	--cc-rpm=${CC_RPM} \
-	--rpm-tarfile=${RPM_TARFILE}
+	--rpm-tarfile=${RPM_TARFILE} \
+	--output-name=${OUTPUT_RPM}
+
+# Step 3 Create zenoss-centos ISO file that includes the files from the
+#        tarball in a separate directory
+# inputs: a CentOS ISO file, and a tarball of updated RPMs
+# outputs: output/zenoss-<CENTOS_ISO>-bld-<BUILD_NUMBER>.iso
+cp ${ISO_FILEPATH} ${BUILD_DIR}
+OUTPUT_ISO="${OUTPUT_NAME}.iso"
+python create_iso.py \
+	--build-dir=${BUILD_DIR} \
+	--build-number=${BUILD_NUMBER} \
+	--base-iso=${CENTOS_ISO} \
+	--cc-repo=${CC_REPO} \
+	--cc-rpm=${CC_RPM} \
+	--rpm-tarfile=${RPM_TARFILE} \
+	--output-name=${OUTPUT_ISO}
+
 
 # Step 5 Test newly created ISO file
 # inputs: newly build zenoss-centos ISO

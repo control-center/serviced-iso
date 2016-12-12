@@ -4,6 +4,7 @@ import argparse
 import json
 import logging as log
 import os
+import shutil
 
 from subprocess import check_call, check_output
 
@@ -24,11 +25,13 @@ if __name__ == '__main__':
                         help='The yum repo were the serviced RPM resides')
     parser.add_argument('--rpm-tarfile', type=str, required=True,
                         help='the name of the tar file containing RPM updates')
+    parser.add_argument('--output-name', type=str, required=True,
+                        help='the name of the RPM file to be created')
     args = parser.parse_args()
 
     scripts_dir = os.getcwd()
-    mirror_file = "yum-mirror-{}-{}-{}-{}".format(
-        args.base_iso, args.cc_rpm, args.cc_repo, args.build_number)
+    output_path = os.path.join(os.path.abspath(args.build_dir), args.output_name)
+    mirror_name = "yum-mirror"
 
     mirror_dir = os.path.join(os.path.abspath(args.build_dir), "mirror")
     rpmroot = os.path.join(mirror_dir, "rpmroot")
@@ -55,8 +58,13 @@ gpgcheck=0
     check_call(untar_cmd, shell=True)
 
     log.info("Building mirror RPM ...")
-    docker_run="docker run --rm -e MIRROR_FILE={} -e MIRROR_VERSION=1.2.0 -v {}:/scripts -v {}:/shared zenoss/fpm /scripts/convert-repo-mirror.sh".format(
-        mirror_file, scripts_dir, mirror_dir)
+    docker_run="docker run --rm -e MIRROR_FILE={} -e MIRROR_VERSION=1 -v {}:/scripts -v {}:/shared zenoss/fpm /scripts/convert-repo-mirror.sh".format(
+        mirror_name, scripts_dir, mirror_dir)
     check_call(docker_run, shell=True)
 
+    mirror_file = "{}-1-1.x86_64.rpm".format(mirror_name)
+    mirror_path = os.path.join(mirror_dir, mirror_file)
+    log.info("mirror_path %s" % mirror_path)
+    log.info("output_path %s" % output_path)
+    shutil.move(mirror_path, output_path)
     check_call(cleanup_cmd, shell=True)
