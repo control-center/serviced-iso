@@ -20,6 +20,10 @@ ISO_FILEPATH=$HOME/isos/${ISO_FILENAME}
 RPM_TARFILE=${CENTOS_ISO}-rpm-updates.tar.gz
 BUILD_DIR=./output
 
+export PACKER_CACHE_DIR="${HOME}/packer_cache"
+export PACKER_LOG=1
+export PACKER_LOG_PATH="$(readlink -e ${BUILD_DIR})/packer.log"
+
 if [ -z "$BUILD_NUMBER" ]
 then
     BUILD_NUMBER="dev"
@@ -27,16 +31,16 @@ fi
 
 # Step 0 Download the ISO if it's not cached already
 if [ ! -f ${ISO_FILEPATH} ]
-then 
+then
     echo "Downloading ${ISO_FILENAME}"
     wget -q http://artifacts.zenoss.eng/isos/${ISO_FILENAME} -O ${ISO_FILEPATH}
-fi 
+fi
 
 if [ -z ${ISO_FILEPATH} ]
 then
     echo "ERROR: Can not find ${ISO_FILEPATH}"
     exit 1
-fi 
+fi
 
 set -x
 rm -rf ${BUILD_DIR}
@@ -55,11 +59,13 @@ packer -machine-readable build -force \
 packer -machine-readable build -force \
 	-only=virtualbox-ovf \
 	-var vm_source=${BUILD_DIR}/${CENTOS_ISO}.ovf \
+	-var cc_repo=${CC_REPO} \
+	-var cc_rpm=${CC_RPM} \
 	-var rpm_tarfile=${RPM_TARFILE} \
 	-var outputdir=${BUILD_DIR} \
 	vm-get-update-pkgs.json
 
-# Step 3 Create zenoss-centos ISO file that includes the files from the 
+# Step 3 Create zenoss-centos ISO file that includes the files from the
 #        tarball in a separate directory
 # inputs: a CentOS ISO file, and a tarball of updated RPMs
 # outputs: output/zenoss-<CENTOS_ISO>-bld-<BUILD_NUMBER>.iso

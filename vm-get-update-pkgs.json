@@ -12,8 +12,12 @@
   "provisioners": [
     {
       "type": "shell",
+      "environment_vars": [
+        "CC_RPM={{user `cc_rpm`}}",
+        "CC_REPO={{user `cc_repo`}}"
+      ],
       "scripts": [
-         "./get-update-pkgs.sh"
+        "./get-update-pkgs.sh"
       ]
     },
     {
@@ -26,6 +30,8 @@
   "variables": {
     "vm_source": "",
     "rpm_tarfile": "",
+    "cc_rpm": "",
+    "cc_repo": "",
     "outputdir": "output"
   }
 }
