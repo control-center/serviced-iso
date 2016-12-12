@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -x
+set -e
 pwd
 
 mkdir -p /home/centos/tmp
@@ -24,6 +25,7 @@ done
 curl -sO http://get.zenoss.io/yum/zenoss-repo-1-1.x86_64.rpm
 sudo yum localinstall -y zenoss-repo-1-1.x86_64.rpm
 
+sudo chmod 777 /etc/yum.repos.d
 sudo cat <<EOF > /etc/yum.repos.d/docker.repo
 [dockerrepo]
 name=Docker Repository
@@ -37,7 +39,7 @@ EOF
 yumdownloader --enablerepo=zenoss-$CC_REPO --resolve $CC_RPM
 
 # Remove the CC package, so that we only bundling non-zenoss RPMs.
-rm $CC_RPM*
+rm -f serviced* zenoss*
 
 # Add in all of the other utilities that we want on the appliance images
 yumdownloader --resolve telnet
