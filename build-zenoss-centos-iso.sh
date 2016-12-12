@@ -98,6 +98,16 @@ python create_iso.py \
 	--cc-rpm=${CC_RPM} \
 	--rpm-tarfile=${RPM_TARFILE}
 
-# Step 4 Test newly created ISO file
+# Step 4 Create the offline mirror based on the tar file
+#
+python ./create_mirror.py \
+	--build-dir=${BUILD_DIR} \
+	--build-number=${BUILD_NUMBER} \
+	--base-iso=${CENTOS_ISO} \
+	--cc-repo=${CC_REPO} \
+	--cc-rpm=${CC_RPM} \
+	--rpm-tarfile=${RPM_TARFILE}
+
+# Step 5 Test newly created ISO file
 # inputs: newly build zenoss-centos ISO
 # output: a Centos VM based on the ISO that was just built
