@@ -3,7 +3,7 @@
     {
       "type": "vmware-iso",
       "output_directory": "{{user `outputdir`}}",
-      "guest_os_type": "RedHat_64",
+      "guest_os_type": "centos-64",
       "iso_url": "{{user `iso_url`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "iso_checksum_type": "md5",
@@ -55,7 +55,7 @@
   "provisioners": [
     {
       "type": "file",
-      "source": "{{user `cc_rpm`}}",
+      "source": "output/{{user `cc_rpm`}}",
       "destination": "/tmp/{{user `cc_rpm`}}"
     },
     {
