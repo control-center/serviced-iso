@@ -125,8 +125,7 @@ python create_iso.py \
 	--output-name=${OUTPUT_ISO}
 
 md5sum ${BUILD_DIR}/${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.md5sum.txt
-sha256sum ${BUILD_DIR}/${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.sha256sum.txt
+md5sum ${BUILD_DIR}/${OUTPUT_RPM} >>${BUILD_DIR}/${OUTPUT_NAME}.md5sum.txt
 
-# Step 5 Test newly created ISO file
-# inputs: newly build zenoss-centos ISO
-# output: a Centos VM based on the ISO that was just built
+sha256sum ${BUILD_DIR}/${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.sha256sum.txt
+sha256sum ${BUILD_DIR}/${OUTPUT_RPM} >>${BUILD_DIR}/${OUTPUT_NAME}.sha256sum.txt
