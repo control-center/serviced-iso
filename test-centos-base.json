@@ -61,8 +61,18 @@
     {
       "type": "shell",
       "inline": [
+        "echo 'MERGE-RPM-TEST-DEPS: BEGIN installing zenoss-mirror RPM'",
         "sudo yum -y localinstall /opt/centos-updates/yum-mirror-serviced.rpm",
-        "sudo yum -y --disablerepo=\\* --enablerepo=zenoss-mirror update"
+        "echo 'MERGE-RPM-TEST-DEPS: DONE installing zenoss-mirror RPM'",
+        "echo 'MERGE-RPM-TEST-DEPS: BEGIN installing CentOS updates from zenoss-mirror'",
+        "sudo yum -y --disablerepo=\\* --enablerepo=zenoss-mirror update",
+        "echo 'MERGE-RPM-TEST-DEPS: DONE installing CentOS updates from zenoss-mirror'"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "echo 'MERGE-RPM-TEST-DEPS: BEGIN installing {{user `cc_rpm`}}'"
       ]
     },
     {
@@ -71,6 +81,12 @@
       "environment_vars": [
         "CC_RPM_DIR=/tmp",
         "CC_RPM_FILENAME={{user `cc_rpm`}}"
+      ]
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "echo 'MERGE-RPM-TEST-DEPS: DONE installing {{user `cc_rpm`}}'"
       ]
     }
   ],
