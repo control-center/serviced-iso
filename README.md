@@ -35,6 +35,17 @@ For more info about the older build process for the yum mirror RPM, see the
 script `offline/create_offline_bundle.py` in the `support/5.1.x` branch 
 of the [zenoss/zenoss-deploy](https://github.com/zenoss/zenoss-deploy) repo.
 
+# When/How is the ISO and mirror RPM updated?
+
+The ISO and yum mirror RPMs are created by a Jenkins job. The job is NOT run nightly, but only
+run on demand. 
+
+The job should be run anytime the set of OS and third-party dependencies need to be updated.
+When do they need to be updated?
+* when the dependencies defined in the CC RPM change
+* whenever we modify the set of misc third-party utilities we use in the appliance change (e.g. ntp, telnet, etc)
+* whenever we are want to get a refresh of the OS utilities in general; e.g. at the start a new release, or we need a new kernel version, etc.
+
 # Process Details
 
 The specific CentOS ISO images used as a baseline are hard-coded in `jenkins-build.sh`.
