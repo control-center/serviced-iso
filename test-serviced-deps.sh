@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
+set -e
+set -x
 
-
-sudo yum -y --disablerepo\* --enablerepo=zenoss-mirror install \
-  bash-completion \
-  device-mapper-lib \
-  device-mapper-event \
-  device-mapper-event-libs \
-  docker-engine-1.12.1 \
-  rsync \
-  lvm2
-
-rpm -ivh --test ${CC_RPM_FILEPATH}
+cd $CC_RPM_DIR
+sudo yum -y localinstall --disablerepo=\* --enablerepo=zenoss-mirror ${CC_RPM_FILENAME}

@@ -62,17 +62,17 @@
       "type": "shell",
       "inline": [
         "sudo yum -y localinstall /opt/centos-updates/yum-mirror-serviced.rpm",
-        "sudo yum -y --disablerepo=\* --enablerepo=zenoss-mirror update"
+        "sudo yum -y --disablerepo=\\* --enablerepo=zenoss-mirror update"
       ]
     },
     {
       "type": "shell",
       "script": "test-serviced-deps.sh",
       "environment_vars": [
-        "CC_RPM_FILEPATH='/tmp/{{user `cc_rpm`}}'"
+        "CC_RPM_DIR=/tmp",
+        "CC_RPM_FILENAME={{user `cc_rpm`}}"
       ]
-    },
-
+    }
   ],
   "variables": {
     "inputdir": "prereqs",
