@@ -28,6 +28,6 @@ SERVICED_CENTOS_ISO_CHECKSUM=`cat ${CHECKSUM_FILEPATH} | grep iso | awk '{print 
 packer -machine-readable build -force -only=virtualbox-iso \
   -var iso_url=${SERVICED_CENTOS_ISO_URL} \
   -var iso_checksum=${SERVICED_CENTOS_ISO_CHECKSUM} \
-  -var outputdir=./output \
+  -var outputdir=./vm-output \
   -var cc_rpm=${SERVICED_RPM} \
   test-centos-base.json
