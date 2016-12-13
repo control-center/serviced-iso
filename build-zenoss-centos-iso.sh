@@ -113,19 +113,15 @@ python ./create_mirror.py \
 	--rpm-tarfile=${RPM_TARFILE} \
 	--output-name=${OUTPUT_RPM}
 
-# Step 3 Create zenoss-centos ISO file that includes the files from the
-#        tarball in a separate directory
-# inputs: a CentOS ISO file, and a tarball of updated RPMs
-# outputs: output/zenoss-<CENTOS_ISO>-bld-<BUILD_NUMBER>.iso
+# Step 4 Create serviced ISO file that includes the yum mirror
+#        in a separate directory
 cp ${ISO_FILEPATH} ${BUILD_DIR}
 OUTPUT_ISO="${OUTPUT_NAME}.iso"
 python create_iso.py \
 	--build-dir=${BUILD_DIR} \
 	--build-number=${BUILD_NUMBER} \
 	--base-iso=${CENTOS_ISO} \
-	--cc-repo=${CC_REPO} \
-	--cc-rpm=${CC_RPM} \
-	--rpm-tarfile=${RPM_TARFILE} \
+	--yum-mirror=${OUTPUT_RPM} \
 	--output-name=${OUTPUT_ISO}
 
 md5sum ${BUILD_DIR}/${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.md5sum.txt
