@@ -44,12 +44,12 @@ esac
 
 ISO_FILENAME=${CENTOS_ISO}.iso
 ISO_FILEPATH=$HOME/isos/${ISO_FILENAME}
-RPM_TARFILE=${CENTOS_ISO}-rpm-updates.tar.gz
-BUILD_DIR=./output
+RPM_TARFILE=${CENTOS_ABBREV}-rpm-updates.tar.gz
+BUILD_DIR=./output-${CENTOS_ABBREV}
 
 export PACKER_CACHE_DIR="${HOME}/packer_cache"
 export PACKER_LOG=1
-export PACKER_LOG_PATH="$(readlink -e ${BUILD_DIR})/packer.log"
+export PACKER_LOG_PATH="${BUILD_DIR}/packer-${CENTOS_ABBREV}.log"
 
 if [ -z "$BUILD_NUMBER" ]
 then
@@ -128,8 +128,8 @@ python create_iso.py \
 	--rpm-tarfile=${RPM_TARFILE} \
 	--output-name=${OUTPUT_ISO}
 
-md5sum ${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.md5sum.txt
-sha256sum ${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.sha256sum.txt
+md5sum ${BUILD_DIR}/${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.md5sum.txt
+sha256sum ${BUILD_DIR}/${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.sha256sum.txt
 
 # Step 5 Test newly created ISO file
 # inputs: newly build zenoss-centos ISO
