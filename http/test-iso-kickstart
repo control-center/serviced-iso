@@ -87,6 +87,8 @@ sed -i -r "s@^.*requiretty@#Defaults requiretty@" /etc/sudoers
 echo "centos    ALL=(ALL)    NOPASSWD: ALL" >> /etc/sudoers.d/centos
 chmod 440 /etc/sudoers.d/centos
 
-yum -y update --enablerepo=base
-yum -y clean all
+mkdir /mnt/postInstall
+mount -r -t auto /dev/sr0 /mnt/postInstall
+mkdir -p /opt/centos-updates
+cp -r /mnt/postInstall/centos-updates/* /opt/centos-updates
 %end
