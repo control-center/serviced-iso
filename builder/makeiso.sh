@@ -3,9 +3,7 @@
 # Builds an installable Zenoss ISO appliance
 #
 # Expects:
-#   - /build the directory with the build bundle
-#     (must include /build/manifest.json)
-#   - /common the directory with shared appliance files
+#   - /mnt/build - the directory with the CentOS ISO and the zenoss yum mirror
 #   - /output the directory where the resulting ISO goes
 
 ISO_ID="Zenoss_CentOS_Install"
@@ -26,13 +24,13 @@ then
     exit 1
 fi
 
-if [ -z "$RPM_TARFILE" ]
+if [ -z "$YUM_MIRROR" ]
 then
-    echo "ERROR: RPM_TARFILE not defined"
+    echo "ERROR: YUM_MIRROR not defined"
     exit 1
-elif [ ! -f /mnt/build/$RPM_TARFILE ]
+elif [ ! -f /mnt/build/$YUM_MIRROR ]
 then
-    echo "ERROR: /mnt/build/$RPM_TARFILE not found"
+    echo "ERROR: /mnt/build/$YUM_MIRROR not found"
     exit 1
 fi
 
@@ -50,17 +48,12 @@ chmod +w -R working
 # remove TRANS.TBL files
 find working -name TRANS.TBL -exec rm -f {} \; -print
 
-echo "Unpacking $RPM_TARFILE ..."
+echo "Installing $YUM_MIRROR ..."
 mkdir working/centos-updates
-cd working/centos-updates
-tar xvfz /mnt/build/$RPM_TARFILE
-
-echo 'Creating repo ...'
-createrepo -p --unique-md .
-echo 'Done copying packages'
-cd /
+cp /mnt/build/$YUM_MIRROR working/centos-updates/yum-mirror-serviced.rpm
 
 # stage files needed on appliance
+cd /
 mkdir working/zenoss
 
 # install kickstart and modify boot config
