@@ -23,11 +23,11 @@ set -e
 
 export CENTOS_ISO=CentOS-7-x86_64-Minimal-1511
 export ISO_CHECKSUM=88c0437f0a14c6e2c94426df9d43cd67
-./build-zenoss-centos-iso.sh
+./build-serviced-iso.sh
 
 export CENTOS_ISO=CentOS-7-x86_64-Minimal-1503-01
 export ISO_CHECKSUM=d07ab3e615c66a8b2e9a50f4852e6a77
-./build-zenoss-centos-iso.sh
+./build-serviced-iso.sh
 
 #
 # Consolidate all of the artifacts in a single directory
