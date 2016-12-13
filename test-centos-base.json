@@ -78,7 +78,6 @@
     "inputdir": "prereqs",
     "kickstart": "test-iso-kickstart",
     "outputdir": "output",
-    "centos_iso": "",
     "iso_url": "",
     "iso_checksum": "",
     "ssh_username": "centos",
