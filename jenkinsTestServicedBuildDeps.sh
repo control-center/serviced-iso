@@ -12,6 +12,10 @@ if [ ! -d ./output ]; then
     mkdir -p output
 fi
 
+export PACKER_CACHE_DIR="${HOME}/packer_cache"
+export PACKER_LOG=1
+export PACKER_LOG_PATH="${BUILD_DIR}/packer-${SERVICED_RPM}.log"
+
 SERVICED_ARTIFACT_BASENAME=serviced-1.2.0-1-stable-centos7.2.1511-bld-12
 SERVICED_CENTOS_ISO_URL=http://artifacts.zenoss.eng/isos/serviced/${SERVICED_ARTIFACT_BASENAME}.iso
 CHECKSUM_FILEPATH=output/${SERVICED_ARTIFACT_BASENAME}.md5sum.txt
