@@ -54,12 +54,25 @@
   ],
   "provisioners": [
     {
+      "type": "file",
+      "source": "{{user `cc_rpm`}}",
+      "destination": "/tmp/{{user `cc_rpm`}}"
+    },
+    {
       "type": "shell",
       "inline": [
-	"yum list updates",
-	"ls -laR /opt/centos-updates"
+        "sudo yum -y localinstall /opt/centos-updates/yum-mirror-serviced.rpm",
+        "sudo yum -y --disablerepo=\* --enablerepo=zenoss-mirror update"
       ]
-    }
+    },
+    {
+      "type": "shell",
+      "script": "test-serviced-deps.sh",
+      "environment_vars": [
+        "CC_RPM_FILEPATH='/tmp/{{user `cc_rpm`}}'"
+      ]
+    },
+
   ],
   "variables": {
     "inputdir": "prereqs",
@@ -69,6 +82,7 @@
     "iso_url": "",
     "iso_checksum": "",
     "ssh_username": "centos",
-    "ssh_password": "centos"
+    "ssh_password": "centos",
+    "cc_rpm": ""
   }
 }
