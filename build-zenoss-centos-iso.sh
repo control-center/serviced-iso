@@ -128,6 +128,8 @@ python create_iso.py \
 	--rpm-tarfile=${RPM_TARFILE} \
 	--output-name=${OUTPUT_ISO}
 
+md5sum ${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.md5sum.txt
+sha256sum ${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.sha256sum.txt
 
 # Step 5 Test newly created ISO file
 # inputs: newly build zenoss-centos ISO
