@@ -1,11 +1,11 @@
 IMAGENAME  = base-iso-build
-VERSION   ?= 1.0.0
+VERSION   ?= 1.0.1
 LOCAL_TAG = zenoss/$(IMAGENAME):$(VERSION)
 REMOTE_TAG = docker-registry-v2.zenoss.eng/$(IMAGENAME):$(VERSION)
 
 .PHONY: build push clean
 
-build: 
+build:
 	@echo Building image
 	@docker build -f Dockerfile -t $(LOCAL_TAG) .
 
