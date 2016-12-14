@@ -12,6 +12,7 @@ if [ ! -d ./output ]; then
     mkdir -p output
 fi
 
+export BUILD_DIR=output
 export PACKER_CACHE_DIR="${HOME}/packer_cache"
 export PACKER_LOG=1
 export PACKER_LOG_PATH="${BUILD_DIR}/packer-${SERVICED_RPM}.log"
