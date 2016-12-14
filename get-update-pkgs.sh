@@ -48,7 +48,9 @@ yumdownloader --resolve ntp
 yumdownloader --resolve zip
 yumdownloader --resolve unzip
 yumdownloader --resolve nano
+yumdownloader --resolve sysstat
 yumdownloader --resolve yum-utils
+yumdownloader --resolve wget
 
 tar -czvf ../centos7-rpms.tar.gz ./*.rpm
 
