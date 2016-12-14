@@ -30,7 +30,7 @@ fi
 
 SERVICED_CENTOS_ISO_CHECKSUM=`cat ${CHECKSUM_FILEPATH} | grep iso | awk '{print $1}'`
 
-packer -machine-readable build -force -only=virtualbox-iso \
+packer -machine-readable build -force -only=vmware-iso \
   -var iso_url=${SERVICED_CENTOS_ISO_URL} \
   -var iso_checksum=${SERVICED_CENTOS_ISO_CHECKSUM} \
   -var outputdir=./vm-output \
