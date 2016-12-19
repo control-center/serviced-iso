@@ -46,6 +46,22 @@ When do they need to be updated?
 * whenever we modify the set of misc third-party utilities we use in the appliance change (e.g. ntp, telnet, etc)
 * whenever we are want to get a refresh of the OS utilities in general; e.g. at the start a new release, or we need a new kernel version, etc.
 
+For builds off of develop, the job which builds the iso is 
+[ControlCenter/develop/serviced-centos-iso-build](http://platform-jenkins.zenoss.eng/job/ControlCenter/job/develop/job/serviced-centos-iso-build/).  
+After a new ISO is built, you need to manually update two other scripts to use the new ISO:
+
+1. The script [jenkinsTestServicedBuildDeps.sh](jenkinsTestServicedBuildDeps.sh) in this repo.
+1. The script [offline/create_serviced_bom.py](https://github.com/zenoss/zenoss-deploy/blob/develop/offline/create_serviced_bom.py) 
+in the [zenoss/zenoss-deploy](https://github.com/zenoss/zenoss-deploy) repo.
+
+The [jenkinsTestServicedBuildDeps.sh](jenkinsTestServicedBuildDeps.sh) script is used to verify that all of the dependencies 
+defined by the latest CC RPM are included in the CC ISO. The test script is run by the job 
+[ControlCenter/develop/merge-rpm-test-deps](http://platform-jenkins.zenoss.eng/job/ControlCenter/job/develop/job/merge-rpm-test-deps/)
+each time a new CC RPM is produced.
+
+The [offline/create_serviced_bom.py](https://github.com/zenoss/zenoss-deploy/blob/develop/offline/create_serviced_bom.py) script
+is used to construct the CC BOM file that defines the inputs to appliance build process, including the base ISO name.
+
 # Process Details
 
 The specific CentOS ISO images used as a baseline are hard-coded in `jenkins-build.sh`.
