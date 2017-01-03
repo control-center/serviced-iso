@@ -51,6 +51,7 @@ yumdownloader --resolve nano
 yumdownloader --resolve sysstat
 yumdownloader --resolve yum-utils
 yumdownloader --resolve wget
+yumdownloader --resolve python-chardet
 yumdownloader --resolve cloud-init
 yumdownloader --resolve open-vm-tools
 
