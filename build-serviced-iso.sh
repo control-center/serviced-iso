@@ -28,6 +28,10 @@ then
 fi
 
 case "${CENTOS_ISO}" in
+   *1611*)
+	CENTOS_ABBREV=centos7.3.1611
+	;;
+
    *1511*)
 	CENTOS_ABBREV=centos7.2.1511
 	;;
