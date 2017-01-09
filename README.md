@@ -31,14 +31,14 @@ Lastly, the processes for building an RM OVA, an RM ISO and the yum mirror did
 not guarantee the exact same set of third-party RPMs in all three artifacts due
 to slight variations between these different appliance builds.
 
-For more info about the older build process for the yum mirror RPM, see the 
-script `offline/create_offline_bundle.py` in the `support/5.1.x` branch 
+For more info about the older build process for the yum mirror RPM, see the
+script `offline/create_offline_bundle.py` in the `support/5.1.x` branch
 of the [zenoss/zenoss-deploy](https://github.com/zenoss/zenoss-deploy) repo.
 
 # When/How is the ISO and mirror RPM updated?
 
 The ISO and yum mirror RPMs are created by a Jenkins job. The job is NOT run nightly, but only
-run on demand. 
+run on demand.
 
 The job should be run anytime the set of OS and third-party dependencies need to be updated.
 When do they need to be updated?
@@ -46,16 +46,16 @@ When do they need to be updated?
 * whenever we modify the set of misc third-party utilities we use in the appliance change (e.g. ntp, telnet, etc)
 * whenever we are want to get a refresh of the OS utilities in general; e.g. at the start a new release, or we need a new kernel version, etc.
 
-For builds off of develop, the job which builds the iso is 
-[ControlCenter/develop/serviced-centos-iso-build](http://platform-jenkins.zenoss.eng/job/ControlCenter/job/develop/job/serviced-centos-iso-build/).  
+For builds off of develop, the job which builds the iso is
+[ControlCenter/develop/serviced-centos-iso-build](http://platform-jenkins.zenoss.eng/job/ControlCenter/job/develop/job/serviced-centos-iso-build/).
 After a new ISO is built, you need to manually update two other scripts to use the new ISO:
 
 1. The script [jenkinsTestServicedBuildDeps.sh](jenkinsTestServicedBuildDeps.sh) in this repo.
-1. The script [offline/create_serviced_bom.py](https://github.com/zenoss/zenoss-deploy/blob/develop/offline/create_serviced_bom.py) 
+1. The script [offline/create_serviced_bom.py](https://github.com/zenoss/zenoss-deploy/blob/develop/offline/create_serviced_bom.py)
 in the [zenoss/zenoss-deploy](https://github.com/zenoss/zenoss-deploy) repo.
 
-The [jenkinsTestServicedBuildDeps.sh](jenkinsTestServicedBuildDeps.sh) script is used to verify that all of the dependencies 
-defined by the latest CC RPM are included in the CC ISO. The test script is run by the job 
+The [jenkinsTestServicedBuildDeps.sh](jenkinsTestServicedBuildDeps.sh) script is used to verify that all of the dependencies
+defined by the latest CC RPM are included in the CC ISO. The test script is run by the job
 [ControlCenter/develop/merge-rpm-test-deps](http://platform-jenkins.zenoss.eng/job/ControlCenter/job/develop/job/merge-rpm-test-deps/)
 each time a new CC RPM is produced.
 
@@ -76,7 +76,7 @@ format:
 where:
 * `<cc-rpm>` is the serviced RPM used to determine what dependencies are added to the mirror RPM
 * `<cc-repo>` the repo name where `<cc-rpm>` resides; i.e. one of `unstable`, `testing`, or `stable`
-* `<centos-base>` the CentOS base version; one of `centos7.2.1511` or `centos7.1.1503`
+* `<centos-base>` the CentOS base version; one of `centos7.3.1611`, `centos7.2.1511` or `centos7.1.1503`
 * `<build-number>` the Jenkins build number from the environment variable `BUILD_NUMBER`; defaults to `dev` if the `BUILD_NUMBER` is not defined
 
 Conceptually, the yum mirror RPM contains 3 sets of components:
