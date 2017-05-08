@@ -90,3 +90,4 @@ for debugging Zookeeper issues and unzip for installing inspector.
 Note that the yum mirror RPM does NOT include any RPMs from zenoss.
 These will always be delivered separately
 
+FYI - for convenience, the image is created with a default `centos` user.
