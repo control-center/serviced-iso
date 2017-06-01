@@ -28,8 +28,8 @@ sudo yum localinstall -y zenoss-repo-1-1.x86_64.rpm
 sudo chmod 777 /etc/yum.repos.d
 sudo cat <<EOF > /etc/yum.repos.d/docker-ce.repo
 [docker-ce-stable]
-name=Docker CE Stable - $basearch
-baseurl=https://download.docker.com/linux/centos/7/$basearch/stable
+name=Docker CE Stable - x86_64
+baseurl=https://download.docker.com/linux/centos/7/x86_64/stable
 enabled=1
 gpgcheck=1
 gpgkey=https://download.docker.com/linux/centos/gpg
