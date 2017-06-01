@@ -26,13 +26,13 @@ curl -sO http://get.zenoss.io/yum/zenoss-repo-1-1.x86_64.rpm
 sudo yum localinstall -y zenoss-repo-1-1.x86_64.rpm
 
 sudo chmod 777 /etc/yum.repos.d
-sudo cat <<EOF > /etc/yum.repos.d/docker.repo
-[dockerrepo]
-name=Docker Repository
-baseurl=https://yum.dockerproject.org/repo/main/centos/7
+sudo cat <<EOF > /etc/yum.repos.d/docker-ce.repo
+[docker-ce-stable]
+name=Docker CE Stable - $basearch
+baseurl=https://download.docker.com/linux/centos/7/$basearch/stable
 enabled=1
 gpgcheck=1
-gpgkey=https://yum.dockerproject.org/gpg
+gpgkey=https://download.docker.com/linux/centos/gpg
 EOF
 
 # Use yumdownloader to get all 3rd-party dependencies for CC
