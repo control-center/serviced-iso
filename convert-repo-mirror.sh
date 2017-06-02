@@ -9,6 +9,7 @@
 #   - $MIRROR_VERSION is the version number of the mirror file to create
 
 # Create the repo metadata
+yum makecache fast
 yum -y install yum-utils createrepo
 createrepo /shared/rpmroot/opt/zenoss-repo-mirror
 
