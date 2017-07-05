@@ -62,6 +62,20 @@ each time a new CC RPM is produced.
 The [offline/create_serviced_bom.py](https://github.com/zenoss/zenoss-deploy/blob/develop/offline/create_serviced_bom.py) script
 is used to construct the CC BOM file that defines the inputs to appliance build process, including the base ISO name.
 
+## How to Change dependencies for the CC RPM
+There is a chicken-and-egg problem with modifying the dependencies for CC because the CC build which produces a new CC RPM containing the dependency change needs a corresponding CC ISO containing the dependent RPMs. However, the CC ISO cannot be rebuilt to package the dependent RPMS until a new CC RPM is published. 
+
+By the same token, attempts to build a Zenoss appliance with the new CC RPM will fail because the new CC RPM requires dependent RPMs to be packaged in the CC ISO.
+
+Use the following procedure to workaround that circular dependency.  
+
+1. Make the necessary changes to the CC packaging in the CC github repo. 
+When those changes are merged, the CC `merge-start` build will run automatically. Typically, this build will fail during the `merge-rpm-test-deps` job because the new dependencies are not yet in the CC ISO.
+1.Rerun the CC `merge-start` build manually, but enable the build parameter `SKIP_RPM_TEST_DEPS`. This will repeat the build process, but it will skip the `merge-rpm-test-deps` job. Alternatively, you can manually execute the CC `merge-rpm-build` job and also enable the build parameter `SKIP_RPM_TEST_DEPS`. 
+1. After the new CC RPM has been pushed to the Zenoss RPM repo, execute the `serviced-centos-iso-build` job specifying the RPM that was just built.
+1. After the `serviced-centos-iso-build` job has finished, update the [jenkinsTestServicedBuildDeps.sh](jenkinsTestServicedBuildDeps.sh) script in this repo to reference the new ISO; see the `SERVICED_ARTIFACT_BASENAME` definition in that script. The next time the CC `merge-start` script is run it should execute the `merge-rpm-test-deps` job which should pass.
+1. Also, update the [offline/create_serviced_bom.py](https://github.com/zenoss/zenoss-deploy/blob/develop/offline/create_serviced_bom.py) script to specify the new ISO as well.  The next time the Zenoss appliance build runs, it should package the right CC RPM.
+
 # Process Details
 
 The specific CentOS ISO images used as a baseline are hard-coded in `jenkins-build.sh`.
