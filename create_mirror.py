@@ -30,10 +30,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     scripts_dir = os.getcwd()
-    output_path = os.path.join(os.path.abspath(args.build_dir), args.output_name)
+    build_dir = os.path.abspath(args.build_dir)
+    output_path = os.path.join(build_dir, args.output_name)
     mirror_name = "yum-mirror"
 
-    mirror_dir = os.path.join(os.path.abspath(args.build_dir), "mirror")
+    mirror_dir = os.path.join(build_dir, "mirror")
     rpmroot = os.path.join(mirror_dir, "rpmroot")
     cleanup_cmd = "sudo rm -rf {}".format(rpmroot)
     check_call(cleanup_cmd, shell=True)
@@ -45,7 +46,7 @@ if __name__ == '__main__':
 name=Local Zenoss mirror for offline installs
 baseurl=file:///opt/zenoss-repo-mirror
 enabled=1
-gpgcheck=0
+gpgcheck=1
 """
     with open(os.path.join(reposdir, "zenoss-mirror.repo"), 'w') as f:
         f.write(zenoss_mirror_def)
@@ -68,3 +69,16 @@ gpgcheck=0
     log.info("output_path %s" % output_path)
     shutil.move(mirror_path, output_path)
     check_call(cleanup_cmd, shell=True)
+
+    # sign the rpm
+    os.chdir(scripts_dir)
+    mkyum_path = os.path.join(scripts_dir, "mkyum")
+    if not os.path.exists(mkyum_path):
+        # Clone the mkyum repo from the master branch.
+        branch = "master"
+        cmd = ["git", "clone", "git@github.com:zenoss/mkyum.git", "--branch", branch, "--single-branch", mkyum_path]
+        check_call(cmd)
+    mkyum_path = os.path.join(mkyum_path, 'mkrepo')
+    os.chdir(mkyum_path)
+    os.environ["HOST_RPM_LOC"] = build_dir
+    check_call("make sign-rpms", shell=True)
