@@ -46,7 +46,7 @@ if __name__ == '__main__':
 name=Local Zenoss mirror for offline installs
 baseurl=file:///opt/zenoss-repo-mirror
 enabled=1
-gpgcheck=1
+gpgcheck=0
 """
     with open(os.path.join(reposdir, "zenoss-mirror.repo"), 'w') as f:
         f.write(zenoss_mirror_def)
