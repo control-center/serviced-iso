@@ -36,7 +36,7 @@ gpgkey=https://download.docker.com/linux/centos/gpg
 EOF
 
 # Use yumdownloader to get all 3rd-party dependencies for CC
-yumdownloader --enablerepo=zenoss-$CC_REPO --resolve $CC_RPM
+yumdownloader --enablerepo=zenoss-$CC_REPO --resolve $CC_RPM --setopt=obsoletes=0
 
 # Remove the CC package, so that we only bundling non-zenoss RPMs.
 rm -f serviced* zenoss*
