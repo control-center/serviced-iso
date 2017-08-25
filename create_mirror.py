@@ -58,9 +58,28 @@ gpgcheck=0
     untar_cmd="tar xvf ../../../../{}".format(args.rpm_tarfile)
     check_call(untar_cmd, shell=True)
 
+    # Make sure we have access to the mkyum repo.
+    mkyum_path = os.path.join(scripts_dir, "mkyum")
+    mkrepo_path = os.path.join(mkyum_path, 'mkrepo')
+    if not os.path.exists(mkyum_path):
+        log.info("Retrieving mkyum..")
+        # Clone the mkyum repo from the master branch.
+        branch = "master"
+        cmd = ["git", "clone", "git@github.com:zenoss/mkyum.git", "--branch", branch, "--single-branch", mkyum_path]
+        check_call(cmd)
+
+    # Build the zenoss/mkyum docker image.
+    os.chdir(mkrepo_path)
+    log.info("Building the mkyum image..")
+    check_call("make mkyum-build", shell=True)
+
     log.info("Building mirror RPM ...")
-    docker_run="docker run --rm -e MIRROR_FILE={} -e MIRROR_VERSION=1 -v {}:/scripts -v {}:/shared zenoss/fpm /scripts/convert-repo-mirror.sh".format(
-        mirror_name, scripts_dir, mirror_dir)
+    version_file = os.path.join(mkrepo_path, 'VERSION')
+    with open(version_file, 'r') as fd:
+        mkyum_version = fd.read().strip()
+    docker_image = "zenoss/mkyum:{}".format(mkyum_version)
+    docker_run="docker run --rm -e MIRROR_FILE={} -e MIRROR_VERSION=1 -v {}:/scripts -v {}:/shared {} /scripts/convert-repo-mirror.sh".format(
+        mirror_name, scripts_dir, mirror_dir, docker_image)
     check_call(docker_run, shell=True)
 
     mirror_file = "{}-1-1.x86_64.rpm".format(mirror_name)
@@ -71,14 +90,6 @@ gpgcheck=0
     check_call(cleanup_cmd, shell=True)
 
     # sign the rpm
-    os.chdir(scripts_dir)
-    mkyum_path = os.path.join(scripts_dir, "mkyum")
-    if not os.path.exists(mkyum_path):
-        # Clone the mkyum repo from the master branch.
-        branch = "master"
-        cmd = ["git", "clone", "git@github.com:zenoss/mkyum.git", "--branch", branch, "--single-branch", mkyum_path]
-        check_call(cmd)
-    mkyum_path = os.path.join(mkyum_path, 'mkrepo')
-    os.chdir(mkyum_path)
+    os.chdir(mkrepo_path)
     os.environ["HOST_RPM_LOC"] = build_dir
     check_call("make sign-rpms", shell=True)

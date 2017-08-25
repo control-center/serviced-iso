@@ -9,8 +9,12 @@
 #   - $MIRROR_VERSION is the version number of the mirror file to create
 
 # Create the repo metadata
-yum -y install yum-utils createrepo
+yum -y install yum-utils createrepo rpm-build
 createrepo /shared/rpmroot/opt/zenoss-repo-mirror
+
+# Create the detached gpg signature.
+PASSPHRASE=$(curl -s http://artifacts.zenoss.loc/repos/.secret/passphrase)
+gpg --batch --passphrase "${PASSPHRASE}" --detach-sign --armor /shared/rpmroot/opt/zenoss-repo-mirror/repodata/repomd.xml
 
 # Package the contents of /shared/rpmroot into a yum mirror RPM ($MIRROR_FILE)
 cd /shared
