@@ -41,10 +41,15 @@ case "${CENTOS_ISO}" in
 	;;
 
    *)
-	echo "ERROR: CENTOS_ISO='${CENTOS_ISO}' does not contain one of the recognized versions: 1511 or 1503"
+	echo "ERROR: CENTOS_ISO='${CENTOS_ISO}' does not contain one of the recognized versions: 1503, 1511, 1611"
 	exit 1
 	;;
 esac
+
+
+if [[ -n "${DVD}" ]]; then
+    CENTOS_ABBREV="${CENTOS_ABBREV}-dvd"
+fi
 
 ISO_FILENAME=${CENTOS_ISO}.iso
 ISO_FILEPATH=$HOME/isos/${ISO_FILENAME}

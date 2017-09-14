@@ -21,6 +21,8 @@ mkdir -p ${CONSOLIDATED_OUTPUT}
 
 set -e
 
+# Build the minimal isos for appliances.
+
 export CENTOS_ISO=CentOS-7-x86_64-Minimal-1611
 export ISO_CHECKSUM=d2ec6cfa7cf6d89e484aa2d9f830517c
 ./build-serviced-iso.sh
@@ -31,6 +33,21 @@ export ISO_CHECKSUM=88c0437f0a14c6e2c94426df9d43cd67
 
 export CENTOS_ISO=CentOS-7-x86_64-Minimal-1503-01
 export ISO_CHECKSUM=d07ab3e615c66a8b2e9a50f4852e6a77
+./build-serviced-iso.sh
+
+# Build the dvd isos for upgrades.
+export DVD=1
+
+export CENTOS_ISO=CentOS-7-x86_64-DVD-1611
+export ISO_CHECKSUM=871d931b7d71cf5ecededb03c76583de
+./build-serviced-iso.sh
+
+export CENTOS_ISO=CentOS-7-x86_64-DVD-1511
+export ISO_CHECKSUM=c875b0f1dabda14f00a3e261d241f63e
+./build-serviced-iso.sh
+
+export CENTOS_ISO=CentOS-7-x86_64-DVD-1503-01
+export ISO_CHECKSUM=99e450fb1b22d2e528757653fcbf5fdc
 ./build-serviced-iso.sh
 
 #
