@@ -28,6 +28,10 @@ then
 fi
 
 case "${CENTOS_ISO}" in
+   *1708*)
+	CENTOS_ABBREV=centos7.4.1708
+	;;
+
    *1611*)
 	CENTOS_ABBREV=centos7.3.1611
 	;;
@@ -41,7 +45,7 @@ case "${CENTOS_ISO}" in
 	;;
 
    *)
-	echo "ERROR: CENTOS_ISO='${CENTOS_ISO}' does not contain one of the recognized versions: 1511 or 1503"
+	echo "ERROR: CENTOS_ISO='${CENTOS_ISO}' does not contain one of the recognized versions: 1503, 1511, 1611, 1708"
 	exit 1
 	;;
 esac
