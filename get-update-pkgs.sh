@@ -55,6 +55,7 @@ yumdownloader --resolve python-chardet
 yumdownloader --resolve cloud-init
 yumdownloader --resolve open-vm-tools
 yumdownloader --resolve tcpdump
+yumdownloader --resolve dnsmasq
 
 tar -czvf ../centos7-rpms.tar.gz ./*.rpm
 
