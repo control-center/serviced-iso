@@ -19,40 +19,42 @@ if __name__ == '__main__':
                         help='the build number')
     parser.add_argument('--base-iso', type=str, required=True,
                         help='CentOS original ISO to start from')
-    parser.add_argument('--cc-rpm', type=str, required=True,
-                        help='The serviced RPM used for dependencies')
-    parser.add_argument('--cc-repo', type=str, required=True,
-                        help='The yum repo were the serviced RPM resides')
     parser.add_argument('--rpm-tarfile', type=str, required=True,
                         help='the name of the tar file containing RPM updates')
     parser.add_argument('--output-name', type=str, required=True,
                         help='the name of the RPM file to be created')
+    parser.add_argument('--mirror-name', type=str, default="yum-mirror",
+                        help='the name of the yum mirror to be created')
+    parser.add_argument('--mirror-key', type=str, default="zenoss-mirror",
+                        help='the name of the yum mirror key')
+    parser.add_argument('--mirror-dirname', type=str, default="zenoss-repo-mirror",
+                        help='the directory name under /opt for the mirror')
     args = parser.parse_args()
 
     scripts_dir = os.getcwd()
     build_dir = os.path.abspath(args.build_dir)
     output_path = os.path.join(build_dir, args.output_name)
-    mirror_name = "yum-mirror"
+    mirror_name = args.mirror_name
 
     mirror_dir = os.path.join(build_dir, "mirror")
     rpmroot = os.path.join(mirror_dir, "rpmroot")
     cleanup_cmd = "sudo rm -rf {}".format(rpmroot)
     check_call(cleanup_cmd, shell=True)
 
-    log.info("Creating zenoss-mirror repo definition")
+    log.info("Creating %s repo definition" % args.mirror_key)
     reposdir = os.path.join(rpmroot, "etc/yum.repos.d")
     os.makedirs(reposdir)
-    zenoss_mirror_def = """[zenoss-mirror]
+    zenoss_mirror_def = """[%s]
 name=Local Zenoss mirror for offline installs
-baseurl=file:///opt/zenoss-repo-mirror
+baseurl=file:///opt/%s
 enabled=1
 gpgcheck=0
-"""
-    with open(os.path.join(reposdir, "zenoss-mirror.repo"), 'w') as f:
+""" % (args.mirror_key, args.mirror_dirname)
+    with open(os.path.join(reposdir, "%s.repo" % args.mirror_key), 'w') as f:
         f.write(zenoss_mirror_def)
 
     log.info("Untarring RPMs ...")
-    mirror_rpm_dir = os.path.join(rpmroot, "opt/zenoss-repo-mirror")
+    mirror_rpm_dir = os.path.join(rpmroot, "opt/%s" % args.mirror_dirname)
     os.makedirs(mirror_rpm_dir)
     os.chdir(mirror_rpm_dir)
     untar_cmd="tar xvf ../../../../{}".format(args.rpm_tarfile)
@@ -78,8 +80,9 @@ gpgcheck=0
     with open(version_file, 'r') as fd:
         mkyum_version = fd.read().strip()
     docker_image = "zenoss/mkyum:{}".format(mkyum_version)
-    docker_run="docker run --rm -e MIRROR_FILE={} -e MIRROR_VERSION=1 -v {}:/scripts -v {}:/shared {} /scripts/convert-repo-mirror.sh".format(
-        mirror_name, scripts_dir, mirror_dir, docker_image)
+    docker_run="docker run --rm -e MIRROR_DIRNAME={} -e MIRROR_FILE={} -e MIRROR_VERSION=1 -v {}:/scripts -v {}:/shared {} /scripts/convert-repo-mirror.sh".format(
+        args.mirror_dirname, mirror_name, scripts_dir, mirror_dir, docker_image)
+    print ">%s" % docker_run
     check_call(docker_run, shell=True)
 
     mirror_file = "{}-1-1.x86_64.rpm".format(mirror_name)

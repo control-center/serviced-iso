@@ -40,6 +40,7 @@ export ISO_CHECKSUM=d07ab3e615c66a8b2e9a50f4852e6a77
 #
 # Consolidate all of the artifacts in a single directory
 #
+mv -f ./output-centos*/update-os* ${CONSOLIDATED_OUTPUT}
 mv -f ./output-centos*/serviced* ${CONSOLIDATED_OUTPUT}
 mv -f ./output-centos*/*.tar.gz ${CONSOLIDATED_OUTPUT}
 mv -f ./output-centos*/packer*.log ${CONSOLIDATED_OUTPUT}

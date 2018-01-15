@@ -10,11 +10,11 @@
 
 # Create the repo metadata
 yum -y install yum-utils createrepo rpm-build
-createrepo /shared/rpmroot/opt/zenoss-repo-mirror
+createrepo /shared/rpmroot/opt/${MIRROR_DIRNAME}
 
 # Create the detached gpg signature.
 PASSPHRASE=$(curl -s http://artifacts.zenoss.loc/repos/.secret/passphrase)
-gpg --batch --passphrase "${PASSPHRASE}" --detach-sign --armor /shared/rpmroot/opt/zenoss-repo-mirror/repodata/repomd.xml
+gpg --batch --passphrase "${PASSPHRASE}" --detach-sign --armor /shared/rpmroot/opt/${MIRROR_DIRNAME}/repodata/repomd.xml
 
 # Package the contents of /shared/rpmroot into a yum mirror RPM ($MIRROR_FILE)
 cd /shared

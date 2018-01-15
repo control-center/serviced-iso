@@ -33,6 +33,12 @@
       "source": "/home/centos/centos7-rpms.tar.gz",
       "destination": "{{user `outputdir`}}/{{user `rpm_tarfile`}}",
       "direction": "download"
+    },
+    {
+      "type": "file",
+      "source": "/home/centos/centos7-os-rpms.tar.gz",
+      "destination": "{{user `outputdir`}}/{{user `rpm_os_tarfile`}}",
+      "direction": "download"
     }
   ],
   "variables": {
