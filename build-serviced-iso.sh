@@ -29,19 +29,19 @@ fi
 
 case "${CENTOS_ISO}" in
    *1708*)
-	CENTOS_ABBREV=centos7.4.1708
+	export CENTOS_ABBREV=centos7.4.1708
 	;;
 
    *1611*)
-	CENTOS_ABBREV=centos7.3.1611
+	export CENTOS_ABBREV=centos7.3.1611
 	;;
 
    *1511*)
-	CENTOS_ABBREV=centos7.2.1511
+	export CENTOS_ABBREV=centos7.2.1511
 	;;
 
    *1503*)
-	CENTOS_ABBREV=centos7.1.1503
+	export CENTOS_ABBREV=centos7.1.1503
 	;;
 
    *)
@@ -53,6 +53,7 @@ esac
 ISO_FILENAME=${CENTOS_ISO}.iso
 ISO_FILEPATH=$HOME/isos/${ISO_FILENAME}
 RPM_TARFILE=${CENTOS_ABBREV}-rpm-updates.tar.gz
+RPM_OS_TARFILE=${CENTOS_ABBREV}-os-rpm-updates.tar.gz
 BUILD_DIR=./output-${CENTOS_ABBREV}
 
 export PACKER_CACHE_DIR="${HOME}/packer_cache"
@@ -105,10 +106,25 @@ packer -machine-readable build -force \
 	-var cc_repo=${CC_REPO} \
 	-var cc_rpm=${CC_RPM} \
 	-var rpm_tarfile=${RPM_TARFILE} \
+	-var rpm_os_tarfile=${RPM_OS_TARFILE} \
 	-var outputdir=${BUILD_DIR} \
 	vm-get-update-pkgs.json
 
-# Step 3 Create the offline mirror based on the tar file
+# Step 3 Create the os mirror based on the tar file
+#
+OUTPUT_OS_NAME="${CENTOS_ABBREV}-os-bld-${BUILD_NUMBER}"
+OUTPUT_OS_RPM="${OUTPUT_OS_NAME}.rpm"
+python ./create_mirror.py \
+	--build-dir=${BUILD_DIR} \
+	--build-number=${BUILD_NUMBER} \
+	--base-iso=${CENTOS_ISO} \
+	--rpm-tarfile=${RPM_OS_TARFILE} \
+	--output-name=${OUTPUT_OS_RPM} \
+	--mirror-name="zenoss-os-mirror" \
+	--mirror-key="zenoss-os-mirror" \
+	--mirror-dirname="zenoss-os-mirror"
+
+# Step 4 Create the offline mirror based on the tar file
 #
 OUTPUT_NAME="${CC_RPM}-${CC_REPO}-${CENTOS_ABBREV}-bld-${BUILD_NUMBER}"
 OUTPUT_RPM="${OUTPUT_NAME}.rpm"
@@ -116,12 +132,10 @@ python ./create_mirror.py \
 	--build-dir=${BUILD_DIR} \
 	--build-number=${BUILD_NUMBER} \
 	--base-iso=${CENTOS_ISO} \
-	--cc-repo=${CC_REPO} \
-	--cc-rpm=${CC_RPM} \
 	--rpm-tarfile=${RPM_TARFILE} \
 	--output-name=${OUTPUT_RPM}
 
-# Step 4 Create serviced ISO file that includes the yum mirror
+# Step 5 Create serviced ISO file that includes the yum mirror
 #        in a separate directory
 cp ${ISO_FILEPATH} ${BUILD_DIR}
 OUTPUT_ISO="${OUTPUT_NAME}.iso"
@@ -132,8 +146,17 @@ python create_iso.py \
 	--yum-mirror=${OUTPUT_RPM} \
 	--output-name=${OUTPUT_ISO}
 
+# Step 6 Create the zenoss os update iso that can be used to update the
+#        appliance os.
+python ./os-update/create_update.py \
+	--build-dir=${BUILD_DIR} \
+	--build-number=${BUILD_NUMBER} \
+	--os-mirror=${OUTPUT_OS_RPM}
+
 md5sum ${BUILD_DIR}/${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.md5sum.txt
 md5sum ${BUILD_DIR}/${OUTPUT_RPM} >>${BUILD_DIR}/${OUTPUT_NAME}.md5sum.txt
+md5sum ${BUILD_DIR}/${OUTPUT_OS_RPM} >>${BUILD_DIR}/${OUTPUT_OS_NAME}.md5sum.txt
 
 sha256sum ${BUILD_DIR}/${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.sha256sum.txt
 sha256sum ${BUILD_DIR}/${OUTPUT_RPM} >>${BUILD_DIR}/${OUTPUT_NAME}.sha256sum.txt
+sha256sum ${BUILD_DIR}/${OUTPUT_OS_RPM} >>${BUILD_DIR}/${OUTPUT_OS_NAME}.sha256sum.txt

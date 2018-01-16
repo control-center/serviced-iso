@@ -44,8 +44,10 @@ if __name__ == '__main__':
     # Create the Serviced ISO from base_iso + yum mirror.
     # The result is saved as an ISO
     log.info('Calling docker run to create ISO')
-    check_call('docker run -e "BASE_ISO_NAME=%s.iso" -e "YUM_MIRROR=%s" -e "ISO_FILENAME=%s" --privileged=true --rm -v=%s:/mnt/build -v=%s:/mnt/output %s' % (
+    cmd = 'docker run -e "BASE_ISO_NAME=%s.iso" -e "YUM_MIRROR=%s" -e "ISO_FILENAME=%s" --privileged=true --rm -v=%s:/mnt/build -v=%s:/mnt/output %s' % (
                 args.base_iso, args.yum_mirror, args.output_name,
                 build_dir, build_dir,
-                DOCKER_BUILDER), shell=True)
+                DOCKER_BUILDER)
+    log.info('>%s' % cmd);
+    check_call(cmd, shell=True)
 

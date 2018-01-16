@@ -21,6 +21,25 @@ do
 	yumdownloader --resolve $rpm
 done
 
+# Add in all of the other utilities that we want on the appliance images
+yumdownloader --resolve telnet
+yumdownloader --resolve nmap-ncat
+yumdownloader --resolve ntp
+yumdownloader --resolve zip
+yumdownloader --resolve unzip
+yumdownloader --resolve nano
+yumdownloader --resolve sysstat
+yumdownloader --resolve yum-utils
+yumdownloader --resolve wget
+yumdownloader --resolve python-chardet
+yumdownloader --resolve cloud-init
+yumdownloader --resolve open-vm-tools
+yumdownloader --resolve tcpdump
+yumdownloader --resolve dnsmasq
+yumdownloader --resolve bind-utils
+
+tar -czvf ../centos7-os-rpms.tar.gz ./*.rpm
+
 # Install the Zenoss repo so
 curl -sO http://get.zenoss.io/yum/zenoss-repo-1-1.x86_64.rpm
 sudo yum localinstall -y zenoss-repo-1-1.x86_64.rpm
@@ -41,22 +60,4 @@ yumdownloader --enablerepo=zenoss-$CC_REPO --resolve $CC_RPM --setopt=obsoletes=
 # Remove the CC package, so that we only bundling non-zenoss RPMs.
 rm -f serviced* zenoss*
 
-# Add in all of the other utilities that we want on the appliance images
-yumdownloader --resolve telnet
-yumdownloader --resolve nmap-ncat
-yumdownloader --resolve ntp
-yumdownloader --resolve zip
-yumdownloader --resolve unzip
-yumdownloader --resolve nano
-yumdownloader --resolve sysstat
-yumdownloader --resolve yum-utils
-yumdownloader --resolve wget
-yumdownloader --resolve python-chardet
-yumdownloader --resolve cloud-init
-yumdownloader --resolve open-vm-tools
-yumdownloader --resolve tcpdump
-yumdownloader --resolve dnsmasq
-yumdownloader --resolve bind-utils
-
 tar -czvf ../centos7-rpms.tar.gz ./*.rpm
-
