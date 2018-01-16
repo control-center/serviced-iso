@@ -148,6 +148,7 @@ python create_iso.py \
 
 # Step 6 Create the zenoss os update iso that can be used to update the
 #        appliance os.
+OS_UPDATE_ISO="update-os-${CENTOS_ABBREV}-bld-${BUILD_NUMBER}.x86_64.iso"
 python ./os-update/create_update.py \
 	--build-dir=${BUILD_DIR} \
 	--build-number=${BUILD_NUMBER} \
@@ -155,8 +156,8 @@ python ./os-update/create_update.py \
 
 md5sum ${BUILD_DIR}/${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.md5sum.txt
 md5sum ${BUILD_DIR}/${OUTPUT_RPM} >>${BUILD_DIR}/${OUTPUT_NAME}.md5sum.txt
-md5sum ${BUILD_DIR}/${OUTPUT_OS_RPM} >>${BUILD_DIR}/${OUTPUT_OS_NAME}.md5sum.txt
+md5sum ${BUILD_DIR}/${OS_UPDATE_ISO} >>${BUILD_DIR}/${OS_UPDATE_ISO}.md5sum.txt
 
 sha256sum ${BUILD_DIR}/${OUTPUT_ISO} >${BUILD_DIR}/${OUTPUT_NAME}.sha256sum.txt
 sha256sum ${BUILD_DIR}/${OUTPUT_RPM} >>${BUILD_DIR}/${OUTPUT_NAME}.sha256sum.txt
-sha256sum ${BUILD_DIR}/${OUTPUT_OS_RPM} >>${BUILD_DIR}/${OUTPUT_OS_NAME}.sha256sum.txt
+sha256sum ${BUILD_DIR}/${OS_UPDATE_ISO} >>${BUILD_DIR}/${OS_UPDATE_ISO}.sha256sum.txt
