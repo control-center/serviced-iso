@@ -15,7 +15,7 @@ sudo yum -y install yum-utils
 # each of those RPMs, and their dependencies
 #
 yum makecache fast
-RPMS=`yum --quiet list updates | grep -v 'Updated Packages' | awk '{print $1}'`
+RPMS=`repoquery --pkgnarrow=updates --nevra '*'`
 for rpm in $RPMS
 do
 	yumdownloader --resolve $rpm
