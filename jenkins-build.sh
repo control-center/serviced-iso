@@ -21,6 +21,14 @@ mkdir -p ${CONSOLIDATED_OUTPUT}
 
 set -e
 
+export CENTOS_ISO=CentOS-7-x86_64-Minimal-1810
+export ISO_CHECKSUM=bd43d41e01c2a46b3cb23eb9139dce4b
+./build-serviced-iso.sh
+
+export CENTOS_ISO=CentOS-7-x86_64-Minimal-1804
+export ISO_CHECKSUM=fabdc67ff3a1674a489953effa285dfd
+./build-serviced-iso.sh
+
 export CENTOS_ISO=CentOS-7-x86_64-Minimal-1708
 export ISO_CHECKSUM=5848f2fd31c7acf3811ad88eaca6f4aa
 ./build-serviced-iso.sh
