@@ -7,6 +7,8 @@ pwd
 mkdir -p /home/centos/tmp
 cd /home/centos/tmp
 
+# Updated CentOS mirrors
+sudo curl -fsSL https://autoinstall.plesk.com/PSA_18.0.62/examiners/repository_check.sh | bash -s -- update >/dev/null
 # Get yumdownloader
 sudo yum -y install yum-utils
 
