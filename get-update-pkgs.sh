@@ -55,7 +55,7 @@ yumdownloader --resolve bind-utils
 tar -czvf ../centos7-os-rpms.tar.gz ./*.rpm
 
 # Install the Zenoss repo so
-curl -sO http://get.zenoss.io/yum/zenoss-repo-1-1.x86_64.rpm
+curl -L -sO http://get.zenoss.io/yum/zenoss-repo-1-1.x86_64.rpm
 sudo yum localinstall -y zenoss-repo-1-1.x86_64.rpm
 
 sudo chmod 777 /etc/yum.repos.d
