@@ -8,7 +8,19 @@ mkdir -p /home/centos/tmp
 cd /home/centos/tmp
 
 # Updated CentOS mirrors
-sudo curl -fsSL https://autoinstall.plesk.com/PSA_18.0.62/examiners/repository_check.sh | bash -s -- update >/dev/null
+old_mirrorlist_host="mirrorlist.centos.org"
+old_host="mirror.centos.org"
+new_host="vault.centos.org"
+
+sed_escape()
+{
+	echo -n "$1" | sed -e 's|\.|\\.|g'
+}
+
+sudo sed -i -e "s|^\s*\(mirrorlist\b[^/]*//`sed_escape "$old_mirrorlist_host"`/.*\)$|#\1|" \
+		-e "s|^#*\s*baseurl\b\([^/]*\)//`sed_escape "$old_host"`/\(.*\)$|baseurl\1//$new_host/\2|" \
+		/etc/yum.repos.d/CentOS-*.repo
+
 # Get yumdownloader
 sudo yum -y install yum-utils
 
@@ -43,7 +55,7 @@ yumdownloader --resolve bind-utils
 tar -czvf ../centos7-os-rpms.tar.gz ./*.rpm
 
 # Install the Zenoss repo so
-curl -sO http://get.zenoss.io/yum/zenoss-repo-1-1.x86_64.rpm
+curl -L -sO http://get.zenoss.io/yum/zenoss-repo-1-1.x86_64.rpm
 sudo yum localinstall -y zenoss-repo-1-1.x86_64.rpm
 
 sudo chmod 777 /etc/yum.repos.d
