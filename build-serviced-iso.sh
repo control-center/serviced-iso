@@ -130,9 +130,6 @@ packer -machine-readable build -force \
 #
 OUTPUT_OS_NAME="${CENTOS_ABBREV}-os-bld-${BUILD_NUMBER}"
 OUTPUT_OS_RPM="${OUTPUT_OS_NAME}.rpm"
-
-if [ ! "$(ssh-keygen -F github.com)" ]; then ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null; fi
-
 python ./create_mirror.py \
 	--build-dir=${BUILD_DIR} \
 	--build-number=${BUILD_NUMBER} \
